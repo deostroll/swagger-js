@@ -2,11 +2,13 @@ const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
-  entry: {
-    'swagger-client': [
-      './src/index.js'
-    ]
-  },
+  // entry: {
+  //   'swagger-client': [
+  //     './src/index.js'
+  //   ]
+  // },
+
+  entry : './src/index.js'
 
   output: {
     path: path.join(__dirname, 'dist'),
