@@ -159,17 +159,20 @@ function getOperationRaw(spec, id) {
       return false;
     }
 
+    var rawOperationId = operation.operationId; // straight from the source
     var operationId = opId(operation, pathName, method);
     var legacyOperationId = legacyIdFromPathMethod(pathName, method);
 
-    return operationId && (operationId === id || id === legacyOperationId);
+    return [operationId, legacyOperationId, rawOperationId].some(function (val) {
+      return val && val === id;
+    });
   });
 }
 
 // Will stop iterating over the operations and return the operationObj
 // as soon as predicate returns true
 function findOperation(spec, predicate) {
-  return eachOperation(spec, predicate, true);
+  return eachOperation(spec, predicate, true) || null;
 }
 
 // iterate over each operation, and fire a callback with details
