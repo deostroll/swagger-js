@@ -230,10 +230,10 @@ function normalizeSwagger(parsedSpec) {
 
     var pathParameters = path.parameters;
 
-    for (var method in path) {
+    var _loop = function _loop(method) {
       var operation = path[method];
       if (!(0, _isObject2.default)(operation)) {
-        continue;
+        return 'continue';
       }
 
       var oid = opId(operation, pathName, method);
@@ -250,6 +250,13 @@ function normalizeSwagger(parsedSpec) {
             map[op].forEach(function (o, i) {
               o.operationId = '' + op + (i + 1);
             });
+          } else {
+            // Ensure we always add the normalized operation ID if one already exists ( potentially different, given that we normalize our IDs)
+            // ... _back_ to the spec. Otherwise, they might not line up
+            if (typeof operation.operationId !== 'undefined') {
+              operation.__originalOperationId = operation.operationId;
+              operation.operationId = op;
+            }
           }
         });
       }
@@ -291,7 +298,7 @@ function normalizeSwagger(parsedSpec) {
                   var _iteratorError2 = undefined;
 
                   try {
-                    var _loop = function _loop() {
+                    var _loop2 = function _loop2() {
                       var param = _step2.value;
 
                       var exists = operation[inheritName].some(function (opParam) {
@@ -304,7 +311,7 @@ function normalizeSwagger(parsedSpec) {
                     };
 
                     for (var _iterator2 = (0, _getIterator3.default)(inherits[inheritName]), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                      _loop();
+                      _loop2();
                     }
                   } catch (err) {
                     _didIteratorError2 = true;
@@ -339,6 +346,12 @@ function normalizeSwagger(parsedSpec) {
           }
         }
       }
+    };
+
+    for (var method in path) {
+      var _ret = _loop(method);
+
+      if (_ret === 'continue') continue;
     }
   }
 
